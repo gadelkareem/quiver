@@ -338,9 +338,9 @@ func (p *proxies) tokenString(proxyIp string) string {
 }
 
 func (p *proxies) randomMapKeyValue(proxies map[string]*url.URL) (string, *url.URL) {
-	r := h.RandomNumber(1, len(proxies))
+	r := h.RandomNumber(0, len(proxies)-1)
 
-	i := 1
+	i := 0
 	for ip, u := range proxies {
 		if i == r {
 			return ip, u
