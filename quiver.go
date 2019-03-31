@@ -200,10 +200,12 @@ func (p *proxies) testProxy(proxyUrl *url.URL, ip net.IP) {
 	client := &http.Client{Transport: transport}
 	client.Timeout = 60 * time.Second
 
-	request, err := http.NewRequest("GET", "https://api.ipify.org/", nil)
+	request, err := http.NewRequest("GET", "https://api.myip.com/", nil)
 	if err != nil {
 		panic("Error! proxy failed " + proxyUrl.String())
 	}
+
+	request.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36", )
 
 	response, err := client.Do(request)
 	if err != nil {
