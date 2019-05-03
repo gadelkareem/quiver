@@ -2,6 +2,7 @@ package quiver
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/gadelkareem/go-helpers"
 	"io/ioutil"
@@ -195,6 +196,21 @@ func (p *proxies) loadIpv6MappedProxy() {
 }
 
 func (p *proxies) testProxy(proxyUrl *url.URL, ip net.IP) {
+	err := h.Retry(func() (e error) {
+		e = p.runProxyTest(proxyUrl, ip)
+		if e != nil {
+			logs.Error("proxy misbehaving %s Error: %v", proxyUrl, e)
+			time.Sleep(1 * time.Second)
+		}
+		return e
+	}, 3)
+	if err != nil {
+		logs.Error("proxy misbehaving %s Error: %v", proxyUrl, err)
+		panic("proxy failed")
+	}
+}
+
+func (p *proxies) runProxyTest(proxyUrl *url.URL, ip net.IP) error {
 
 	transport := &http.Transport{Proxy: http.ProxyURL(proxyUrl), ProxyConnectHeader: http.Header{"Request-IP": []string{ip.String()}}}
 	client := &http.Client{Transport: transport}
@@ -202,29 +218,30 @@ func (p *proxies) testProxy(proxyUrl *url.URL, ip net.IP) {
 
 	request, err := http.NewRequest("GET", "https://api.myip.com/", nil)
 	if err != nil {
-		panic("Error! proxy failed " + proxyUrl.String())
+		return err
 	}
 
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36", )
 
 	response, err := client.Do(request)
 	if err != nil {
-		panic("proxies failed " + proxyUrl.String() + " Error:" + err.Error())
+		return err
 	}
 	defer response.Body.Close()
 	bytes, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		panic("proxies failed " + proxyUrl.String() + " Error:" + err.Error())
+		return err
 	}
 	if response.StatusCode != 200 {
-		panic("proxies failed " + proxyUrl.String() + " Status Code:" + string(response.StatusCode))
+		return fmt.Errorf("invalid Status Code: %d", response.StatusCode)
 	}
 	body := string(bytes)
 	if !strings.Contains(body, ip.String()) {
-		panic("proxies failed " + proxyUrl.String() + " Wrong IP address reported \n" + body)
+		return fmt.Errorf("wrong IP address reported: \n %s", body)
 	}
 
 	logs.Alert("proxies test passed %s", proxyUrl)
+	return nil
 }
 
 func (p *proxies) generateRandomIPv6(OriginalIp net.IP, ipNet *net.IPNet) net.IP {
