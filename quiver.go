@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	"github.com/gadelkareem/go-helpers"
 	"io/ioutil"
+	"math/big"
 	"net"
 	"net/http"
 	"net/url"
@@ -16,13 +17,20 @@ import (
 )
 
 const (
-	UseNoProxy         = 0
-	UseIPv4Proxy       = 1
-	UseIPv6Proxy       = 2
-	UseMappedIPv6Proxy = 3
-	UseAllProxy        = 10
-	MaxProxies         = 10000
+	UseNoProxy = 1 << iota
+	UseIPv4Proxy
+	UseIPv6Proxy
+	UseMappedIPv6Proxy
+
+	UseAllProxy = UseIPv4Proxy | UseIPv6Proxy | UseMappedIPv6Proxy
+
+	MaxProxies = 10000
 )
+
+type Proxy interface {
+	List() (u []*url.URL)
+	Type() int
+}
 
 type ProxyFactory interface {
 	RandomProxy() (ip string, u *url.URL)
@@ -38,7 +46,7 @@ type proxies struct {
 	mappedIpv6s, ipv4s, ipv6s                 map[string]*url.URL
 }
 
-func NewProxyFactory(proxyType int, maxProxies int, disableRotation, disableTest, disableAuth bool, proxiesPath, token, ipToken string) ProxyFactory {
+func NewProxyFactory(proxyType int, maxProxies int, disableRotation, disableTest, disableAuth bool, proxiesPath, token, ipToken string, ps ...Proxy) ProxyFactory {
 
 	p := &proxies{}
 
@@ -72,22 +80,18 @@ func (p *proxies) TotalCount() int {
 }
 
 func (p *proxies) load() {
-	switch p.proxyType {
-	case UseAllProxy:
-		p.loadIpv6MappedProxy()
-		p.loadIpv6Proxy()
+
+	if p.proxyType&UseIPv4Proxy > 0 {
 		p.loadIpv4Proxy()
-	case UseIPv4Proxy:
-		p.loadIpv4Proxy()
-	case UseMappedIPv6Proxy:
-		p.loadIpv6MappedProxy()
-		p.loadIpv6Proxy()
-	case UseIPv6Proxy:
-		p.loadIpv6Proxy()
-	case UseNoProxy:
-	default:
-		return
 	}
+
+	if p.proxyType&UseMappedIPv6Proxy > 0 {
+		p.loadIpv6MappedProxy()
+		p.loadIpv6Proxy()
+	} else if p.proxyType&UseIPv6Proxy > 0 {
+		p.loadIpv6Proxy()
+	}
+
 	p.disableTest = true
 }
 
@@ -96,6 +100,7 @@ func (p *proxies) loadIpv6Proxy() {
 	var ip net.IP
 	lines := p.readProxiesFile("ipv6")
 	newService := false
+
 	for _, line := range lines {
 		if strings.HasPrefix(line, "#") {
 			newService = true
@@ -162,8 +167,16 @@ func (p *proxies) loadIpv6MappedProxy() {
 		if err != nil {
 			panic("Error! failed to parse IPv6 CIDR" + err.Error())
 		}
+		//count addresses
+		prefixLen, bits := ipNet.Mask.Size()
+		blockLen := new(big.Int).Exp(big.NewInt(2), big.NewInt(int64(bits-prefixLen)), nil)
+		maxIps := p.maxProxies
+		if blockLen.Cmp(big.NewInt(int64(maxIps))) < 1 {
+			maxIps = int(blockLen.Uint64())
+		}
+
 		var ip net.IP
-		for i := 0; i < p.maxProxies; i++ {
+		for i := 0; i < maxIps; i++ {
 			ip = p.generateRandomIPv6(OriginalIp, ipNet)
 			rawIp := ip.String()
 			authString := p.tokenString(rawIp)
@@ -179,7 +192,7 @@ func (p *proxies) loadIpv6MappedProxy() {
 			if err != nil {
 				panic("Error! fails to parse proxies URL:" + proxyString)
 			}
-			if p.isCached(rawIp) {
+			if p.isCached(rawIp) && i+1 < maxIps {
 				i--
 				continue
 			}
@@ -297,9 +310,9 @@ func (p *proxies) RandomProxy() (ip string, u *url.URL) {
 
 	//tshk-tshk
 	if !p.disableRotation && p.totalCount < 1 {
-		if p.proxyType >= UseMappedIPv6Proxy {
+		if p.proxyType&UseMappedIPv6Proxy > 0 {
 			p.loadIpv6MappedProxy()
-		} else if p.proxyType == UseIPv4Proxy {
+		} else if p.proxyType&UseIPv4Proxy > 0 {
 			p.ipCache = make(map[string]bool)
 			p.loadIpv4Proxy()
 		}
