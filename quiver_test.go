@@ -7,8 +7,9 @@ import (
 
 func TestNewProxyFactory(t *testing.T) {
 	p := quiver.NewProxyFactory(quiver.UseAllProxy, 10, false, true, true, "./testdata", "", "", )
-	for i := 0; i < p.TotalCount(); i++ {
+	tl := p.TotalCount()
+	for i := 0; i < tl; i++ {
 		ip, u := p.RandomProxy()
-		println(ip, u.String(), p.TotalCount())
+		println(ip, u.String())
 	}
 }
