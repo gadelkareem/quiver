@@ -28,8 +28,9 @@ const (
 )
 
 type Proxy interface {
-	List() (u []*url.URL)
+	List() (map[string]*url.URL, error)
 	Type() int
+	Name() string
 }
 
 type ProxyFactory interface {
@@ -44,6 +45,7 @@ type proxies struct {
 	proxyType, maxProxies, totalCount         int
 	ipCache                                   map[string]bool
 	mappedIpv6s, ipv4s, ipv6s                 map[string]*url.URL
+	proxyServices                             []Proxy
 }
 
 func NewProxyFactory(proxyType int, maxProxies int, disableRotation, disableTest, disableAuth bool, proxiesPath, token, ipToken string, ps ...Proxy) ProxyFactory {
@@ -67,6 +69,7 @@ func NewProxyFactory(proxyType int, maxProxies int, disableRotation, disableTest
 	p.disableAuth = disableAuth
 	p.token = token
 	p.ipToken = ipToken
+	p.proxyServices = ps
 
 	p.load()
 
@@ -92,7 +95,32 @@ func (p *proxies) load() {
 		p.loadIpv6Proxy()
 	}
 
+	for _, s := range p.proxyServices {
+		p.loadProxyService(s)
+	}
+
 	p.disableTest = true
+}
+
+func (p *proxies) loadProxyService(s Proxy) {
+	if p.proxyType&s.Type() == 0 {
+		return
+	}
+	l, err := s.List()
+	if err != nil {
+		panic(err.Error())
+	}
+	for ip, u := range l {
+		if strings.Contains(ip, ":") {
+			p.ipv6s[ip] = u
+		} else {
+			p.ipv4s[ip] = u
+		}
+		p.ipCache[ip] = true
+	}
+	ln := len(l)
+	p.totalCount += ln
+	logs.Alert("Found %d proxies from %s.", ln, s.Name())
 }
 
 func (p *proxies) loadIpv6Proxy() {
