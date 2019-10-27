@@ -4,8 +4,6 @@ go 1.12
 
 require (
 	github.com/astaxie/beego v1.12.0
-	github.com/cenkalti/backoff v2.2.1+incompatible
-	github.com/gadelkareem/cachita v0.0.0-20190120182126-27c05434ad48
 	github.com/gadelkareem/go-helpers v0.0.0-20191001005417-e8a6f26af331
 	github.com/gadelkareem/proxy.webshare.io v0.0.0-20191026233143-99e212cfb163
 	github.com/golang/protobuf v1.3.2 // indirect
