@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/astaxie/beego v1.12.0
-	github.com/gadelkareem/go-helpers v0.0.0-20191001005417-e8a6f26af331
+	github.com/gadelkareem/go-helpers v0.0.0-20191028141354-37da31be3be9
 	github.com/gadelkareem/proxy.webshare.io v0.0.0-20191026233143-99e212cfb163
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/mediocregopher/radix/v3 v3.4.0 // indirect
