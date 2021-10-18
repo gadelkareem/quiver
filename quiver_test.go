@@ -1,4 +1,4 @@
-package quiver_test
+package quiver
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	pw "github.com/gadelkareem/proxy.webshare.io"
-	"github.com/gadelkareem/quiver"
 )
 
 func TestNewProxyFactory(t *testing.T) {
@@ -19,7 +18,7 @@ func TestNewProxyFactory(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	p := quiver.NewProxyFactory(quiver.UseAllProxy, 10, false, true, true, "./testdata", "", "", pwProxy)
+	p := NewProxyFactory(UseAllProxy, 10, false, true, true, "./testdata", "", "", pwProxy)
 	tl := p.TotalCount()
 	for i := 0; i < tl; i++ {
 		ip, u := p.RandomProxy()
