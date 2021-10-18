@@ -2,10 +2,11 @@ package quiver_test
 
 import (
 	"fmt"
-	pw "github.com/gadelkareem/proxy.webshare.io"
-	"github.com/gadelkareem/quiver"
 	"os"
 	"testing"
+
+	pw "github.com/gadelkareem/proxy.webshare.io"
+	"github.com/gadelkareem/quiver"
 )
 
 func TestNewProxyFactory(t *testing.T) {
@@ -25,7 +26,7 @@ func TestNewProxyFactory(t *testing.T) {
 		println(ip, u.String())
 	}
 	fmt.Printf("Got %d proxies \n", tl)
-	if tl < 112 {
+	if tl < 260 {
 		t.Error("Invalid number of proxies")
 	}
 }
