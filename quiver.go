@@ -284,7 +284,7 @@ func (p *proxies) runProxyTest(proxyUrl *url.URL, ip net.IP) error {
     }
     body := string(bytes)
     if !strings.Contains(body, ip.String()) {
-        return fmt.Errorf("wrong IP address reported: \n %s", body)
+        return fmt.Errorf("Wrong IP address reported instead of %s got: \n %s", ip, body)
     }
 
     logs.Alert("proxies test passed %s", proxyUrl)

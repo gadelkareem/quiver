@@ -2,10 +2,11 @@ package quiver_test
 
 import (
 	"fmt"
-	pw "github.com/gadelkareem/proxy.webshare.io"
-	"github.com/gadelkareem/quiver"
 	"os"
 	"testing"
+
+	pw "github.com/gadelkareem/proxy.webshare.io"
+	"github.com/gadelkareem/quiver"
 )
 
 func TestNewProxyFactory(t *testing.T) {
