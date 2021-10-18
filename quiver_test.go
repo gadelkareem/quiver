@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	pw "github.com/gadelkareem/proxy.webshare.io"
+	pw "github.com/gadelkareem/proxy.webshare.io_1"
 )
 
 func TestNewProxyFactory(t *testing.T) {
