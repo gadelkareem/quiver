@@ -14,7 +14,7 @@ import (
     "time"
 
     "github.com/astaxie/beego/logs"
-    "github.com/gadelkareem/go-helpers"
+    h "github.com/gadelkareem/go-helpers"
 )
 
 const (
