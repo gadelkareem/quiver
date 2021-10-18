@@ -48,8 +48,11 @@ github.com/gadelkareem/go-helpers v0.0.0-20200725110331-77a434fc0423/go.mod h1:N
 github.com/gadelkareem/proxy.webshare.io v0.0.0-20191026233143-99e212cfb163/go.mod h1:upGgAwi+MWE+4bZga82IRwUZm/0/Lu0zfuTqS03tKTg=
 github.com/gadelkareem/proxy.webshare.io v0.0.0-20211018072907-593d85159cd1 h1:Kt3Pd0O1gC0mXTWlYmiyCH1UK+aSZHiw1X9leuGcpsM=
 github.com/gadelkareem/proxy.webshare.io v0.0.0-20211018072907-593d85159cd1/go.mod h1:JQ4RLwlUnCvfurkTrE7NalvSEnC6ZcVbq76doaF0LH4=
+github.com/gadelkareem/proxy.webshare.io v0.0.0-20211018092501-48c8f7b29143 h1:yO3KB/eA9nhpXjyaPB83P99PgYnNiy1pQWUr80caNvs=
+github.com/gadelkareem/proxy.webshare.io v0.0.0-20211018092501-48c8f7b29143/go.mod h1:Hq1+2H6jx2/U+kFL5JAy4+AV2KmlEjz8VQZnJ7Uip74=
 github.com/gadelkareem/quiver v0.0.0-20190920102459-ce47163ff985/go.mod h1:n7HaT7SsSsyhcOTzp36w/1HFiSSpIp5uoSPCWesuwlY=
 github.com/gadelkareem/quiver v0.0.0-20191027120636-1876d28cdb65/go.mod h1:pfanQR32UOWErbb+oSpoGK83I9XeUkBUTJNHyWxn37E=
+github.com/gadelkareem/quiver v0.0.0-20211018083207-68c4a726ea91/go.mod h1:+YE0shrS+tweCvCzq42wKXCkf3IdtbVY3YnDpCdR3os=
 github.com/garyburd/redigo v1.6.0/go.mod h1:NR3MbYisc3/PwhQ00EMzDiPmrwpPxAn5GI05/YaO1SY=
 github.com/glendc/gopher-json v0.0.0-20170414221815-dc4743023d0c/go.mod h1:Gja1A+xZ9BoviGJNA2E9vFkPjjsl+CoJxSXiQM1UXtw=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
