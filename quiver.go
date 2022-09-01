@@ -263,7 +263,7 @@ func (p *proxies) runProxyTest(proxyUrl *url.URL, ip net.IP) error {
 	client := &http.Client{Transport: transport}
 	client.Timeout = 60 * time.Second
 
-	request, err := http.NewRequest("GET", "https://ifconfig.me/", nil)
+	request, err := http.NewRequest("GET", "https://whatismyv6.com/", nil)
 	if err != nil {
 		return err
 	}
